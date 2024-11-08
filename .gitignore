@@ -1,0 +1,25 @@
+# OpenFAST stuff.
+*.out
+*.outb
+*.ech
+*.sum
+*.sum.yaml
+
+# Results from running the code.
+Results/
+
+# Python stuff.
+__pycache__/
+
+# Matlab stuff.
+*.asv
+*.slxc
+slprj/
+src/TempCache/
+
+# All the openFAST wind files.
+IEA-15-240-RWT/Wind/
+
+# Other
+.mypy_cache
+.vscode
