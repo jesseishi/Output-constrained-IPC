@@ -1,23 +1,4 @@
 %% Designing a color map.
-% clearvars; close all; clc;
-% addpath(genpath('C:\Users\jhummel\OneDrive - Delft University of Technology\Documenten\Projects\Matlab utilities'))
-% load('batlow.mat')
-% load('batlow10.mat')
-% corder = batlow10;
-% idx = floor(linspace(1, length(batlow), 4));
-% ACCcolors = batlow(idx, :);
-% 
-% preplot('colororder', corder)
-% for i = 1:length(corder)
-%     plot(i:10+i)
-% end
-% postplot('lineWidth', 3)
-% 
-% preplot('colororder', ACCcolors)
-% for i = 1:length(ACCcolors)
-%     plot(i:10+i)
-% end
-% postplot('lineWidth', 3)
 
 mycolors = [
      38,  87, 109;
@@ -36,25 +17,12 @@ addpath(genpath('C:\Users\jhummel\OneDrive - Delft University of Technology\Docu
 addpath('preplot-postplot\src')
 
 [TTs, Ts_fft, T, S, N, metadata] = loadandprocess2( ...
-    ["Results/data/FullDOF_U15_turb0p0_PLExp0p07/*/cIPC_adaptiveLPF_*.csv", ...
+    ["Results/data/FullDOF_U15_turb0p0_PLExp0p07/*/cIPC_leakyIntegrator_*.csv", ...
      "Results/data/FullDOF_U15_turb0p0_PLExp0p07/refnone/*.csv"]);
 
 model_labels = metadata(2, :);
 
 figDir = 'Results/figures/ACC';
-
-% %% Check DEL calculation with MLife
-% So many inputs -> maybe skip or ask someone to check.
-% addpath(genpath('C:\Users\jhummel\OneDrive - Delft University of Technology\Documenten\Matlab\MLife\source'))
-% outputDirectory = 'MLifeOut';
-% StatisticsOptions.DoStats = true;
-% FileInfo.RealFmt = '.1f';
-% FileInfo.NamesLine = 
-% FatigueOptions = struct;
-% inputData = TTs{1}{S, "FlappingMoment1_MNm"};
-% 
-% [Fatigue, Statistics] = mlife([], [], outputDirectory, StatisticsOptions, FileInfo, FatigueOptions, inputData);
-
 
 
 %% Generic check if the simulations look OK.
@@ -64,7 +32,7 @@ plotTTsOverview(TTs);
 %% Time response in the rotating frame with leaky integrator weight
 [f, axs] = preplot(3, 1, 'aspectratio', 1.0667, 'paperFormat', 'ACC', 'column', 1, 'colororder', mycolors);
 
-iLPF = matches('adaptiveLPF', model_labels);
+iLPF = matches('leakyIntegrator', model_labels);
 plot(axs(1), TTs{iLPF}(S, :), "FlappingMoment1_MNm")
 plot(axs(2), TTs{iLPF}(S, :), "BldPitch1_deg")
 plot(axs(3), TTs{iLPF}(S, :), "w_L")
@@ -84,7 +52,7 @@ postplot(f, fullfile(figDir, 'timeResponseRotatingFrameWithwL.pdf'), 'linkaxes',
 %% Time response in the rotating frame withOUT leaky integrator weight
 [f, axs] = preplot(2, 1, 'linefrac', 0.33, 'aspectratio', 1.2, 'paperFormat', 'ACC', 'column', 2, 'colororder', mycolors, 'TileSpacing', 'compact');
 
-iLPF = matches('adaptiveLPF', model_labels);
+iLPF = matches('leakyIntegrator', model_labels);
 % plot(axs(1), TTs{iLPF}(S, :), "FlappingMoment1_1Pfilt_MNm")
 plot(axs(1), TTs{iLPF}(S, :).Time, TTs{iLPF}(S, :).FlappingMoment1_1Pfilt_MNm*1000)
 plot(axs(1), TTs{iLPF}(S, :).Time, TTs{iLPF}(S, :).ref_load, '--', 'color', [0.3, 0.3, 0.3])
@@ -169,7 +137,7 @@ postplot(f, fullfile(figDir, 'timeResponsewLT0.pdf'), 'sharex', true, 'removeTim
 [f, axs] = preplot(2, 3, 'paperFormat', 'ACC', 'column', 2, 'aspectRatio', 2.5, 'colororder', mycolors);
 ax_wL = nexttile(3, [2, 1]);
 
-iLPF = matches('adaptiveLPF', model_labels);
+iLPF = matches('leakyIntegrator', model_labels);
 
 plot(axs(1,1), TTs{iLPF}(S, :), "FlappingMoment1_MNm")
 % plot(axs(2,1), TTs{iLPF}(S, :), "theta_CPC_deg", 'color', [0.3, 0.3, 0.3]);
@@ -392,7 +360,7 @@ for i = 1:length(axs)
     set(axs(i), 'ColorOrderIndex', 1)
 end
 
-iLPF = contains(model_labels, 'adaptiveLPF');
+iLPF = contains(model_labels, 'leakyIntegrator');
 plotPareto(axs(1), T(iLPF, :), "theta_ty_mag_deg_mean", "M_ty_mag_kNm_mean")
 plotPareto(axs(2), T(iLPF, :), "BldPitch1_deg_DC", "FlappingMoment1_MNm_DEL")
 
@@ -514,7 +482,7 @@ for iSeed = 1:length(unique_seed_labels)
     end
     
     
-    iLPF = contains(model_labels, 'adaptiveLPF') & seedIdx;
+    iLPF = contains(model_labels, 'leakyIntegrator') & seedIdx;
     plotPareto(axs(1), T(iLPF, :), "theta_ty_mag_deg_mean", "M_ty_mag_kNm_mean")
     plotPareto(axs(2), T(iLPF, :), "BldPitch_Avg_deg_DC", "FlappingMoment_Avg_MNm_DEL")
 %     break
@@ -565,7 +533,7 @@ for i = 1:length(axs)
 end
 
 
-GLPF = contains(G_model_labels, 'adaptiveLPF');
+GLPF = contains(G_model_labels, 'leakyIntegrator');
 plotPareto(axs(1), T_stats(GLPF, :), "theta_ty_avg", "M_ty_avg")
 plotPareto(axs(2), T_stats(GLPF, :), "ADC_avg", "DEL_avg")
 
@@ -612,7 +580,7 @@ for i = 1:length(axs)
 end
 
 
-GLPF = contains(G_model_labels, 'adaptiveLPF');
+GLPF = contains(G_model_labels, 'leakyIntegrator');
 % plotPareto is overrated, it just sorts and then plots. I can do the
 % sorting here and then just use a builtin method.
 T_stats_sorted = sortrows(T_stats, "theta_ty_avg");
@@ -661,7 +629,7 @@ for i = 1:length(axs)
     set(axs(i), 'ColorOrderIndex', 1)
 end
 
-GLPF = contains(G_model_labels, 'adaptiveLPF');
+GLPF = contains(G_model_labels, 'leakyIntegrator');
 plotPareto(axs(1), T_stats(GLPF, :), "theta_ty_avg", "M_ty_avg")
 plotPareto(axs(2), T_stats(GLPF, :), "ADC_avg", "DEL_avg")
 
@@ -701,7 +669,7 @@ GnoIPC = matches(G_model_labels, 'noIPC');
 GfullIPC = matches(G_model_labels, 'fullIPC');
 
 
-GLPF = contains(G_model_labels, 'adaptiveLPF');
+GLPF = contains(G_model_labels, 'leakyIntegrator');
 % plot(ax, T_stats{isort, "ADC_avg"}, T_stats{isort, "DEL_avg"}, 'k')
 plot(ax, T_stats{isort, "ADC_avg"}, T_stats{isort, "DEL_avg"}, 'k', 'lineWidth', 1.5)
 
