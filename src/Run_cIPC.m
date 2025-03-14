@@ -96,7 +96,7 @@ TMax = TMaxs{1};
 %% Simulate constrained IPC
 close all
 
-models = dir('src/Models/cIPC_l*originalLoad.slx');
+models = dir('src/Models/cIPC_leakyIntegrator.slx');
 errors = [];
 
 for i = 1:length(models)
