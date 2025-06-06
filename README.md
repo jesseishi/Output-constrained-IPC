@@ -68,7 +68,7 @@ turbulence intensity, etc...).
 ## Software used
 
 - Python 3.12.1
-- Matlab and Simulink R2022a
+- Matlab and Simulink R2024b
 - The [OpenFAST toolbox](https://github.com/OpenFAST/python-toolbox)
 - [OpenFAST 3.5.0](https://github.com/OpenFAST/openfast/releases/tag/v3.5.0)
 - TurbSim v2.0
