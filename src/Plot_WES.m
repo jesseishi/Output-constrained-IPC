@@ -86,7 +86,7 @@ postplot(f, fullfile(figDir, 'timeResponseRotatingFrame.pdf'), ...
 
 for j = 1:length(originalLoadIndices)
     i = originalLoadIndices(j);
-    plot(axs(1), TTs{i}(S, :).Time, TTs{i}(S, :).M_ty_mag_filt_kNm/1e3)
+    plot(axs(1), TTs{i}(S, :).Time, TTs{i}(S, :).M_ty_mag_filt_MNm)
     plot(axs(2), TTs{i}(S, :), "theta_ty_mag_deg")
 end
 
@@ -319,9 +319,9 @@ iInf = matches(model_labels, 'linforiginalLoad');
 iL2 = matches(model_labels, 'l2originalLoad');
 
 xLInf = T{iInf, "theta_ty_mag_deg_mean"};
-yLInf = T{iInf, "M_ty_mag_kNm_mean"};
+yLInf = T{iInf, "M_ty_mag_MNm_mean"};
 xL2 = T{iL2, "theta_ty_mag_deg_mean"};
-yL2 = T{iL2, "M_ty_mag_kNm_mean"};
+yL2 = T{iL2, "M_ty_mag_MNm_mean"};
 
 x = linspace(0, max([xLInf; xL2]), 1e3);
 method = 'linear';
@@ -415,9 +415,9 @@ std(T2.BldPitch_Avg_deg_DC)
 % Add no and full IPC.
 inoIPC = matches(model_labels, 'noIPC');
 ifullIPC = matches(model_labels, 'fullIPC');
-scatter(axs(1), T(inoIPC, :), "theta_ty_mag_deg_mean", "M_ty_mag_kNm_mean", 'SizeData', 40, 'MarkerEdgeColor', 'k');
+scatter(axs(1), T(inoIPC, :), "theta_ty_mag_deg_mean", "M_ty_mag_MNm_mean", 'SizeData', 40, 'MarkerEdgeColor', 'k');
 scatter(axs(2), T(inoIPC, :), "BldPitch1_deg_DC", "FlappingMoment1_MNm_DEL", 'SizeData', 40, 'MarkerEdgeColor', 'k');
-scatter(axs(1), T(ifullIPC, :), "theta_ty_mag_deg_mean", "M_ty_mag_kNm_mean", 'filled', 'SizeData', 40, 'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k');
+scatter(axs(1), T(ifullIPC, :), "theta_ty_mag_deg_mean", "M_ty_mag_MNm_mean", 'filled', 'SizeData', 40, 'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k');
 scatter(axs(2), T(ifullIPC, :), "BldPitch1_deg_DC", "FlappingMoment1_MNm_DEL", 'filled', 'SizeData', 40, 'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k');
 for i = 1:length(axs)
     set(axs(i), 'ColorOrderIndex', 1)
@@ -431,7 +431,7 @@ for i = 1:length(unique_cIPC_model_labels)
     model_label = unique_cIPC_model_labels(i);
     idx = matches(model_labels, model_label);
     
-    plotPareto(axs(1), T(idx, :), "theta_ty_mag_deg_mean", "M_ty_mag_kNm_mean", 'linestyle', '-x')
+    plotPareto(axs(1), T(idx, :), "theta_ty_mag_deg_mean", "M_ty_mag_MNm_mean", 'linestyle', '-x')
     %     plotPareto(axs(2), T(idx, :), "BldPitch1_deg_psd_at1P", "FlappingMoment1_MNm_psd_at1P")
     plotPareto(axs(2), T(idx, :), "BldPitch1_deg_DC", "FlappingMoment1_MNm_DEL", 'linestyle', '-x')
     %     disp(idx)
@@ -491,9 +491,9 @@ iInf = matches(model_labels, 'linforiginalLoad');
 iL2 = matches(model_labels, 'l2originalLoad');
 
 xLInf = T{iInf, "theta_ty_mag_deg_mean"};
-yLInf = T{iInf, "M_ty_mag_kNm_mean"};
+yLInf = T{iInf, "M_ty_mag_MNm_mean"};
 xL2 = T{iL2, "theta_ty_mag_deg_mean"};
-yL2 = T{iL2, "M_ty_mag_kNm_mean"};
+yL2 = T{iL2, "M_ty_mag_MNm_mean"};
 
 x = linspace(0, max([xLInf; xL2]), 1e3);
 method = 'linear';
@@ -632,10 +632,37 @@ yticks(ax, -90:45:90)
 postplot(f, fullfile(figDir, 'rotatingWindL2.pdf'), 'fontname', 'NimbusRomNo9L', 'fontsize', 8, 'linewidth', 1, 'removeTimetableUnit', true)
 
 
+%% Let's see if it's nicer if we also show the load reduction capabilities for $\ell^2$-IPC.
+[f, axs] = preplot(3, 1, 'paperFormat', 'WES', 'aspectRatio', 0.95, 'colororder', mycolors, 'column', 1);
+
+% First subplot, plot the tilt moment and reference.
+plot(axs(1), TTs{idxL2}(S, :).Time, TTs{idxL2}(S, :).ref_load./1e3, 'color', 'black', 'linestyle', '--')
+plot(axs(1), TTs{idxL2}(S, :), "M_ty_mag_filt_MNm")
+ylabel(axs(1), {'Moment', 'magnitude (MNm)'})
+legend(axs(1), 'Reference', '$\ell^\infty$-IPC', 'location', 'southwest', 'interpreter', 'latex')
+ylim(axs(1), [-1, 2])
+yticks(axs(1), -2:1:2)
 
 
+% Second subplot, plot the phase of the original load.
+plot(axs(2), TTs{idxFullIPC}(S, :), "theta_ty_phase_deg", 'color', 'black', 'linestyle', '--')
+plot(axs(2), TTs{idxL2}(S, :), "M_ty_0_phase_deg")  % Not the pitch signal phase signal but that one is difficult to filter, but theta_phase == M_phase for the l2 controller.
+legend(axs(2), 'Full IPC', '$\ell^2$-IPC', 'interpreter', 'latex', 'location', 'southwest')
+ylabel(axs(2), {'Pitch', 'phase (deg)'})
+xlabel(axs(2), 'Time (s)')
 
+ylim(axs(2), [-90, 90])
+yticks(axs(2), -90:45:90)
 
+% Third plot, plot the control action.
+set(axs(3), 'ColorOrderIndex', 2)
+plot(axs(3), TTs{idxL2}(S, :), "theta_ty_mag_deg")
+ylabel(axs(3), {'pitch', 'magnitude (deg)'})
+ylim(axs(3), [-0.2, 0.2])
+yticks(axs(3), -0.2:0.1:0.2)
+xlabel(axs(3), 'Time (s)')
+
+postplot(f, fullfile(figDir, 'rotatingWindL2_v2.pdf'), 'fontname', 'NimbusRomNo9L', 'fontsize', 8, 'linewidth', 1, 'removeTimetableUnit', true)
 
 
 

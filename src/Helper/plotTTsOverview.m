@@ -6,7 +6,7 @@ function plotTTsOverview(TTs, opts)
 arguments
     TTs cell
     opts.legendLabels string = []
-    opts.signals string = ["Wind1VelX", "RtSpeed_rpm", "GenTq_kNm", "GenPwr_MW", "theta_CPC_deg", "FlappingMoment1_MNm", "BldPitch1_deg", "M_tilt_kNm", "FlappingMoment1_1Pfilt_MNm"];
+    opts.signals string = ["Wind1VelX", "RtSpeed_rpm", "GenTq_MNm", "GenPwr_MW", "theta_CPC_deg", "FlappingMoment1_MNm", "BldPitch1_deg", "M_tilt_MNm", "FlappingMoment1_1Pfilt_MNm"];
     opts.filename string = []
 end
 

@@ -49,7 +49,7 @@ parfor i = 1:N
     TT = calcConvertedSignals(TT, 'deleteOldName', true, 'signalNotFound', opts.signalNotFound);
     TT = calcMagnitudeAndPhaseSignalsPairs(TT, ["M_tilt_MNm", "M_yaw_MNm", "theta_tilt_deg", "theta_yaw_deg", "M_tilt_0_MNm", "M_yaw_0_MNm"], ["M_ty", "theta_ty", "M_ty_0"], 'signalNotFound', opts.signalNotFound, 'signalNameHasUnit', true);
     TT = calcFilteredSignals(TT, ["M_ty_mag_MNm", "theta_ty_mag_deg", "M_tilt_MNm", "M_yaw_MNm", "theta_tilt_deg", "theta_yaw_deg"], 'signalNameHasUnit', 'true');
-%     TT = calc1PFilteredSignals(TT, ["FlappingMoment1_MNm", "BldPitch1_deg"], 'signalNameHasUnit', true, 'TStart', seconds(100));
+    TT = calc1PFilteredSignals(TT, ["FlappingMoment1_MNm", "BldPitch1_deg"], 'signalNameHasUnit', true, 'TStart', seconds(100));
 
     % Let's now calculate some results in the frequency domain.
 %     T_fft = calcFreqDomainSignals(TT(S,:), ["FlappingMoment1_MNm", "BldPitch1_deg"], 'spectrumtype', 'psd');
